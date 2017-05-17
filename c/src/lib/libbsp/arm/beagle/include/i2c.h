@@ -1,5 +1,4 @@
 /**
- * @file
  *
  * @ingroup arm_beagle
  *
@@ -24,47 +23,50 @@
 #define LIBBSP_ARM_BEAGLE_I2C_H
 
 #include <rtems.h>
-
+#include <dev/i2c/i2c.h>
 #include <bsp.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-
 /* I2C Configuration Register (I2C_CON): */
 
-#define I2C_CON_EN  (1 << 15)  /* I2C module enable */
-#define I2C_CON_BE  (1 << 14)  /* Big endian mode */
-#define I2C_CON_STB (1 << 11)  /* Start byte mode (master mode only) */
-#define I2C_CON_MST (1 << 10)  /* Master/slave mode */
-#define I2C_CON_TRX (1 << 9)   /* Transmitter/receiver mode */
-           /* (master mode only) */
-#define I2C_CON_XA  (1 << 8)   /* Expand address */
-#define I2C_CON_STP (1 << 1)   /* Stop condition (master mode only) */
-#define I2C_CON_STT (1 << 0)   /* Start condition (master mode only) */
+#define I2C_CON_EN ( 1 << 15 )  /* I2C module enable */
+#define I2C_CON_BE ( 1 << 14 )  /* Big endian mode */
+#define I2C_CON_STB ( 1 << 11 )  /* Start byte mode (master mode only) */
+#define I2C_CON_MST ( 1 << 10 )  /* Master/slave mode */
+#define I2C_CON_TRX ( 1 << 9 )   /* Transmitter/receiver mode */
+/* (master mode only) */
+#define I2C_CON_XA ( 1 << 8 )   /* Expand address */
+#define I2C_CON_STP ( 1 << 1 )   /* Stop condition (master mode only) */
+#define I2C_CON_STT ( 1 << 0 )   /* Start condition (master mode only) */
+#define I2C_CON_CLR 0x0  /* Clear configuration register */
 
 /* I2C Status Register (I2C_STAT): */
 
-#define I2C_STAT_SBD  (1 << 15) /* Single byte data */
-#define I2C_STAT_BB (1 << 12) /* Bus busy */
-#define I2C_STAT_ROVR (1 << 11) /* Receive overrun */
-#define I2C_STAT_XUDF (1 << 10) /* Transmit underflow */
-#define I2C_STAT_AAS  (1 << 9)  /* Address as slave */
-#define I2C_STAT_GC (1 << 5)
-#define I2C_STAT_XRDY (1 << 4)  /* Transmit data ready */
-#define I2C_STAT_RRDY (1 << 3)  /* Receive data ready */
-#define I2C_STAT_ARDY (1 << 2)  /* Register access ready */
-#define I2C_STAT_NACK (1 << 1)  /* No acknowledgment interrupt enable */
-#define I2C_STAT_AL (1 << 0)  /* Arbitration lost interrupt enable */
-
+#define I2C_STAT_SBD ( 1 << 15 ) /* Single byte data */
+#define I2C_STAT_BB ( 1 << 12 ) /* Bus busy */
+#define I2C_STAT_ROVR ( 1 << 11 ) /* Receive overrun */
+#define I2C_STAT_XUDF ( 1 << 10 ) /* Transmit underflow */
+#define I2C_STAT_AAS ( 1 << 9 )  /* Address as slave */
+#define I2C_STAT_GC ( 1 << 5 )
+#define I2C_STAT_XRDY ( 1 << 4 )  /* Transmit data ready */
+#define I2C_STAT_RRDY ( 1 << 3 )  /* Receive data ready */
+#define I2C_STAT_ARDY ( 1 << 2 )  /* Register access ready */
+#define I2C_STAT_NACK ( 1 << 1 )  /* No acknowledgment interrupt enable */
+#define I2C_STAT_AL ( 1 << 0 )  /* Arbitration lost interrupt enable */
 /* I2C Interrupt Enable Register (I2C_IE): */
-#define I2C_IE_GC_IE  (1 << 5)
-#define I2C_IE_XRDY_IE  (1 << 4) /* Transmit data ready interrupt enable */
-#define I2C_IE_RRDY_IE  (1 << 3) /* Receive data ready interrupt enable */
-#define I2C_IE_ARDY_IE  (1 << 2) /* Register access ready interrupt enable */
-#define I2C_IE_NACK_IE  (1 << 1) /* No acknowledgment interrupt enable */
-#define I2C_IE_AL_IE  (1 << 0) /* Arbitration lost interrupt enable */
+#define I2C_IE_GC_IE ( 1 << 5 )
+#define I2C_IE_XRDY_IE ( 1 << 4 ) /* Transmit data ready interrupt enable */
+#define I2C_IE_RRDY_IE ( 1 << 3 ) /* Receive data ready interrupt enable */
+#define I2C_IE_ARDY_IE ( 1 << 2 ) /* Register access ready interrupt enable */
+#define I2C_IE_NACK_IE ( 1 << 1 ) /* No acknowledgment interrupt enable */
+#define I2C_IE_AL_IE ( 1 << 0 ) /* Arbitration lost interrupt enable */
+
+/* I2C SYSC Register (I2C_SYSC): */
+#define I2C_SYSC_SRST ( 1 << 1 )
+
 /*
  * The equation for the low and high time is
  * tlow = scll + scll_trim = (sampling clock * tlow_duty) / speed
@@ -86,10 +88,10 @@ extern "C" {
  * These are the trim values for standard and fast speed
  */
 #ifndef I2C_FASTSPEED_SCLL_TRIM
-#define I2C_FASTSPEED_SCLL_TRIM   6
+#define I2C_FASTSPEED_SCLL_TRIM 6
 #endif
 #ifndef I2C_FASTSPEED_SCLH_TRIM
-#define I2C_FASTSPEED_SCLH_TRIM   6
+#define I2C_FASTSPEED_SCLH_TRIM 6
 #endif
 
 /* These are the trim values for high speed */
@@ -107,13 +109,12 @@ extern "C" {
 #endif
 
 #define OMAP_I2C_STANDARD 100000
-#define OMAP_I2C_FAST_MODE  400000
+#define OMAP_I2C_FAST_MODE 400000
 #define OMAP_I2C_HIGH_SPEED 3400000
-
 
 /* Use the reference value of 96MHz if not explicitly set by the board */
 #ifndef I2C_IP_CLK
-#define I2C_IP_CLK    SYSTEM_CLOCK_96
+#define I2C_IP_CLK SYSTEM_CLOCK_96
 #endif
 
 /*
@@ -127,23 +128,24 @@ extern "C" {
 #define I2C_INTERNAL_SAMPLING_CLK 19200000
 #endif
 
-#define I2C_PSC_MAX   0x0f
-#define I2C_PSC_MIN   0x00
-
+#define I2C_PSC_MAX 0x0f
+#define I2C_PSC_MIN 0x00
 
 #define DISP_LINE_LEN 128
-#define I2C_TIMEOUT 1000
+#define I2C_TIMEOUT 500
 
 #define I2C_BUS_MAX 3
 
-#define I2C_BASE1         (OMAP34XX_CORE_L4_IO_BASE + 0x070000)
+#define I2C_BASE1 ( OMAP34XX_CORE_L4_IO_BASE + 0x070000 )
 
-#define I2C_DEFAULT_BASE      I2C_BASE1
+#define I2C_DEFAULT_BASE I2C_BASE1
 
-#define I2C_SYSS_RDONE            (1 << 0)  /* Internel reset monitoring */
+#define I2C_SYSS_RDONE ( 1 << 0 )           /* Internel reset monitoring */
 
-#define CONFIG_SYS_I2C_SPEED    100000
-#define CONFIG_SYS_I2C_SLAVE    1
+#define CONFIG_SYS_I2C_SPEED 100000
+#define CONFIG_SYS_I2C_SLAVE 1
+#define I2C_ALL_FLAGS 0x7FFF
+#define I2C_ALL_IRQ_FLAGS 0xFFFF
 
 struct i2c {
   unsigned short rev;   /* 0x00 */
@@ -180,39 +182,26 @@ struct i2c {
   unsigned short res15;
 };
 
-static unsigned short wait_for_pin( void );
-
-static void wait_for_bb( void );
-
-static void flush_fifo( void );
-
-void i2c_init( int speed, int slaveadd );
-
-static int i2c_read_byte(
-  unsigned char devaddr,
-  unsigned char regoffset,
-  unsigned char *value
+void i2c_init(
+  int speed,
+  int slaveadd
 );
 
 int i2c_write(
-  unsigned char chip,
-  unsigned int addr,
-  int alen,
+  unsigned char  chip,
+  unsigned int   addr,
+  int            alen,
   unsigned char *buffer,
-  int len
+  int            len
 );
 
 int i2c_read(
-  unsigned char chip,
-  uint addr,
-  int alen,
+  unsigned char  chip,
+  uint           addr,
+  int            alen,
   unsigned char *buffer,
-  int len
+  int            len
 );
-
-static int imw ( unsigned char  chip, unsigned long addr, unsigned char byte );
-
-static int imd( unsigned char chip, unsigned int addr, unsigned int length );
 
 /**
  * @brief Initializes the I2C module @a i2c.
@@ -225,13 +214,13 @@ static int imd( unsigned char chip, unsigned int addr, unsigned int length );
  */
 rtems_status_code beagle_i2c_init(
   volatile beagle_i2c *i2c,
-  unsigned clock_in_hz
+  unsigned             clock_in_hz
 );
 
 /**
  * @brief Resets the I2C module @a i2c.
  */
-void beagle_i2c_reset(volatile beagle_i2c *i2c);
+void beagle_i2c_reset( volatile beagle_i2c *i2c );
 
 /**
  * @brief Sets the I2C module @a i2c clock.
@@ -243,7 +232,7 @@ void beagle_i2c_reset(volatile beagle_i2c *i2c);
  */
 rtems_status_code beagle_i2c_clock(
   volatile beagle_i2c *i2c,
-  unsigned clock_in_hz
+  unsigned             clock_in_hz
 );
 
 /**
@@ -259,7 +248,7 @@ rtems_status_code beagle_i2c_clock(
  */
 rtems_status_code beagle_i2c_write_start(
   volatile beagle_i2c *i2c,
-  unsigned addr
+  unsigned             addr
 );
 
 /**
@@ -273,9 +262,9 @@ rtems_status_code beagle_i2c_write_start(
  */
 rtems_status_code beagle_i2c_write_with_optional_stop(
   volatile beagle_i2c *i2c,
-  const uint8_t *out,
-  size_t n,
-  bool stop
+  const uint8_t       *out,
+  size_t               n,
+  bool                 stop
 );
 
 /**
@@ -291,7 +280,7 @@ rtems_status_code beagle_i2c_write_with_optional_stop(
  */
 rtems_status_code beagle_i2c_read_start(
   volatile beagle_i2c *i2c,
-  unsigned addr
+  unsigned             addr
 );
 
 /**
@@ -303,9 +292,9 @@ rtems_status_code beagle_i2c_read_start(
  */
 rtems_status_code beagle_i2c_read_with_optional_stop(
   volatile beagle_i2c *i2c,
-  uint8_t *in,
-  size_t n,
-  bool stop
+  uint8_t             *in,
+  size_t               n,
+  bool                 stop
 );
 
 /**
@@ -318,11 +307,11 @@ rtems_status_code beagle_i2c_read_with_optional_stop(
  */
 rtems_status_code beagle_i2c_write_and_read(
   volatile beagle_i2c *i2c,
-  unsigned addr,
-  const uint8_t *out,
-  size_t out_size,
-  uint8_t *in,
-  size_t in_size
+  unsigned             addr,
+  const uint8_t       *out,
+  size_t               out_size,
+  uint8_t             *in,
+  size_t               in_size
 );
 
 /**
@@ -335,12 +324,12 @@ rtems_status_code beagle_i2c_write_and_read(
  */
 static inline rtems_status_code beagle_i2c_write(
   volatile beagle_i2c *i2c,
-  unsigned addr,
-  const uint8_t *out,
-  size_t out_size
+  unsigned             addr,
+  const uint8_t       *out,
+  size_t               out_size
 )
 {
-  return beagle_i2c_write_and_read(i2c, addr, out, out_size, NULL, 0);
+  return beagle_i2c_write_and_read( i2c, addr, out, out_size, NULL, 0 );
 }
 
 /**
@@ -353,12 +342,138 @@ static inline rtems_status_code beagle_i2c_write(
  */
 static inline rtems_status_code beagle_i2c_read(
   volatile beagle_i2c *i2c,
-  unsigned addr,
-  uint8_t *in,
-  size_t in_size
+  unsigned             addr,
+  uint8_t             *in,
+  size_t               in_size
 )
 {
-  return beagle_i2c_write_and_read(i2c, addr, NULL, 0, in, in_size);
+  return beagle_i2c_write_and_read( i2c, addr, NULL, 0, in, in_size );
+}
+
+#define BBB_I2C_SYSCLK 48000000
+#define BBB_I2C_INTERNAL_CLK 12000000
+#define BBB_I2C_SPEED_CLK 100000
+
+#define BBB_I2C_IRQ_ERROR \
+  ( AM335X_I2C_IRQSTATUS_NACK \
+    | AM335X_I2C_IRQSTATUS_ROVR \
+    | AM335X_I2C_IRQSTATUS_AL \
+    | AM335X_I2C_IRQSTATUS_ARDY \
+    | AM335X_I2C_IRQSTATUS_RRDY \
+    | AM335X_I2C_IRQSTATUS_XRDY \
+    | AM335X_I2C_IRQSTATUS_XUDF )
+
+#define BBB_I2C_IRQ_USED \
+  ( AM335X_I2C_IRQSTATUS_ARDY \
+    | AM335X_I2C_IRQSTATUS_XRDY )
+
+#define BBB_I2C_0_BUS_PATH "/dev/i2c-0"
+#define BBB_I2C_1_BUS_PATH "/dev/i2c-1"
+#define BBB_I2C_2_BUS_PATH "/dev/i2c-2"
+
+#define BBB_I2C0_IRQ 70
+#define BBB_I2C1_IRQ 71
+#define BBB_I2C2_IRQ 30
+
+#define MODE2 2
+#define MODE3 3
+
+typedef enum {
+  I2C0,
+  I2C1,
+  I2C2,
+  I2C_COUNT
+} bbb_i2c_id_t;
+
+typedef struct i2c_regs {
+  uint32_t BBB_I2C_REVNB_LO;
+  uint32_t BBB_I2C_REVNB_HI;
+  uint32_t dummy1[ 2 ];
+  uint32_t BBB_I2C_SYSC;
+  uint32_t dummy2[ 4 ];
+  uint32_t BBB_I2C_IRQSTATUS_RAW;
+  uint32_t BBB_I2C_IRQSTATUS;
+  uint32_t BBB_I2C_IRQENABLE_SET;
+  uint32_t BBB_I2C_IRQENABLE_CLR;
+  uint32_t BBB_I2C_WE;
+  uint32_t BBB_I2C_DMARXENABLE_SET;
+  uint32_t BBB_I2C_DMATXENABLE_SET;
+  uint32_t BBB_I2C_DMARXENABLE_CLR;
+  uint32_t BBB_I2C_DMATXENABLE_CLR;
+  uint32_t BBB_I2C_DMARXWAKE_EN;
+  uint32_t BBB_I2C_DMATXWAKE_EN;
+  uint32_t dummy3[ 16 ];
+  uint32_t BBB_I2C_SYSS;
+  uint32_t BBB_I2C_BUF;
+  uint32_t BBB_I2C_CNT;
+  uint32_t BBB_I2C_DATA;
+  uint32_t dummy4;
+  uint32_t BBB_I2C_CON;
+  uint32_t BBB_I2C_OA;
+  uint32_t BBB_I2C_SA;
+  uint32_t BBB_I2C_PSC;
+  uint32_t BBB_I2C_SCLL;
+  uint32_t BBB_I2C_SCLH;
+  uint32_t BBB_I2C_SYSTEST;
+  uint32_t BBB_I2C_BUFSTAT;
+  uint32_t BBB_I2C_OA1;
+  uint32_t BBB_I2C_OA2;
+  uint32_t BBB_I2C_OA3;
+  uint32_t BBB_I2C_ACTOA;
+  uint32_t BBB_I2C_SBLOCK;
+} bbb_i2c_regs;
+
+typedef struct bbb_i2c_bus {
+  i2c_bus base;
+  volatile bbb_i2c_regs *regs;
+  i2c_msg *msgs;
+  uint32_t msg_todo;
+  uint32_t current_msg_todo;
+  uint8_t *current_msg_byte;
+  uint32_t current_todo;
+  bool read;
+  bool hold;
+  rtems_id task_id;
+  rtems_vector_number irq;
+  uint32_t input_clock;
+  uint32_t already_transferred;
+} bbb_i2c_bus;
+
+int am335x_i2c_bus_register(
+  const char         *bus_path,
+  uintptr_t           register_base,
+  uint32_t            input_clock,
+  rtems_vector_number irq
+);
+
+static inline int bbb_register_i2c_0( void )
+{
+  return am335x_i2c_bus_register(
+    BBB_I2C_0_BUS_PATH,
+    AM335X_I2C0_BASE,
+    I2C_BUS_CLOCK_DEFAULT,
+    BBB_I2C0_IRQ
+  );
+}
+
+static inline int bbb_register_i2c_1( void )
+{
+  return am335x_i2c_bus_register(
+    BBB_I2C_1_BUS_PATH,
+    AM335X_I2C1_BASE,
+    I2C_BUS_CLOCK_DEFAULT,
+    BBB_I2C1_IRQ
+  );
+}
+
+static inline int bbb_register_i2c_2( void )
+{
+  return am335x_i2c_bus_register(
+    BBB_I2C_2_BUS_PATH,
+    AM335X_I2C2_BASE,
+    I2C_BUS_CLOCK_DEFAULT,
+    BBB_I2C2_IRQ
+  );
 }
 
 #ifdef __cplusplus
