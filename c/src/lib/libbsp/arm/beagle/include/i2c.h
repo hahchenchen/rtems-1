@@ -43,6 +43,7 @@ extern "C" {
 #define I2C_CON_XA  (1 << 8)   /* Expand address */
 #define I2C_CON_STP (1 << 1)   /* Stop condition (master mode only) */
 #define I2C_CON_STT (1 << 0)   /* Start condition (master mode only) */
+#define I2C_CON_CLR 0x0  /* Clear configuration register */  
 
 /* I2C Status Register (I2C_STAT): */
 
@@ -57,7 +58,6 @@ extern "C" {
 #define I2C_STAT_ARDY (1 << 2)  /* Register access ready */
 #define I2C_STAT_NACK (1 << 1)  /* No acknowledgment interrupt enable */
 #define I2C_STAT_AL (1 << 0)  /* Arbitration lost interrupt enable */
-
 /* I2C Interrupt Enable Register (I2C_IE): */
 #define I2C_IE_GC_IE  (1 << 5)
 #define I2C_IE_XRDY_IE  (1 << 4) /* Transmit data ready interrupt enable */
@@ -65,6 +65,10 @@ extern "C" {
 #define I2C_IE_ARDY_IE  (1 << 2) /* Register access ready interrupt enable */
 #define I2C_IE_NACK_IE  (1 << 1) /* No acknowledgment interrupt enable */
 #define I2C_IE_AL_IE  (1 << 0) /* Arbitration lost interrupt enable */
+
+/* I2C SYSC Register (I2C_SYSC): */
+#define I2C_SYSC_SRST (1 << 1)
+
 /*
  * The equation for the low and high time is
  * tlow = scll + scll_trim = (sampling clock * tlow_duty) / speed
@@ -144,6 +148,8 @@ extern "C" {
 
 #define CONFIG_SYS_I2C_SPEED    100000
 #define CONFIG_SYS_I2C_SLAVE    1
+#define I2C_ALL_FLAGS 0x7FFF
+#define I2C_ALL_IRQ_FLAGS 0xFFFF
 
 struct i2c {
   unsigned short rev;   /* 0x00 */
@@ -358,14 +364,10 @@ static inline rtems_status_code beagle_i2c_read(
     | AM335X_I2C_IRQSTATUS_XRDY \
     | AM335X_I2C_IRQSTATUS_XUDF )
 
-#define BBB_I2C_IRQ_USED \
-  ( BBB_I2C_IRQ_ERROR \
-    | AM335X_I2C_IRQSTATUS_AAS \
-    | AM335X_I2C_IRQSTATUS_BF \
-    | AM335X_I2C_IRQSTATUS_STC \
-    | AM335X_I2C_IRQSTATUS_GC \
-    | AM335X_I2C_IRQSTATUS_XDR \
-    | AM335X_I2C_IRQSTATUS_RDR)
+  #define BBB_I2C_IRQ_USED \
+  ( AM335X_I2C_IRQSTATUS_ARDY \
+    | AM335X_I2C_IRQSTATUS_XRDY)
+
 
 #define BBB_I2C_0_BUS_PATH "/dev/i2c-0"
 #define BBB_I2C_1_BUS_PATH "/dev/i2c-1"
@@ -378,7 +380,6 @@ static inline rtems_status_code beagle_i2c_read(
 #define MODE2 2
 #define MODE3 3
 
-#define delay_bbb_i2c printf("     ");
 
 typedef enum {
   I2C0,
