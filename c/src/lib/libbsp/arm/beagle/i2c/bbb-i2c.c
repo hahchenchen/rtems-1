@@ -7,11 +7,16 @@
  */
 
 /*
- * Copyright (c) 2016 Sichen Zhao <zsc19940506 at gmail.com>
+ * Copyright (c) 2017 Sichen Zhao <zsc19940506@gmail.com>
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
  * http://www.rtems.org/license/LICENSE.
+ */
+
+/*
+ * Modified on Punit Vara<punitvara@gmail.com> works, currently 
+ * the i2c file is working on the Beaglebone Black board(AM335x).
  */
 
 #include <stdio.h>
@@ -529,7 +534,7 @@ int am335x_i2c_bus_register(
   uint32_t input_clock,
   rtems_vector_number irq
 )
-{ 
+{
   bbb_i2c_bus *bus;
   rtems_status_code sc;
   int err;
