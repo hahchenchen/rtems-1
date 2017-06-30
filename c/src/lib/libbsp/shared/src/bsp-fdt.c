@@ -38,8 +38,6 @@ bsp_fdt_blob[BSP_FDT_BLOB_SIZE_MAX / sizeof(uint32_t)];
 void bsp_fdt_copy(const void *src)
 {
   const uint32_t *s = (const uint32_t *) src;
-  printk("BSP_FDT_BLOB_SIZE_MAX:%d\n",BSP_FDT_BLOB_SIZE_MAX );
-  printk("BSP_FDT_BLOB_SIZE_MAX / sizeof(uint32_t):%d\n",BSP_FDT_BLOB_SIZE_MAX / sizeof(uint32_t) );
 #ifdef BSP_FDT_BLOB_READ_ONLY
   uint32_t *d = (uint32_t *) ((uintptr_t) &bsp_fdt_blob[0]
     - (uintptr_t) bsp_section_rodata_begin
@@ -49,12 +47,10 @@ void bsp_fdt_copy(const void *src)
 #endif
 
   if (s != d) {
-    printk("bsp_fdt_copy test1\n");
     uint32_t m = MIN(sizeof(bsp_fdt_blob), fdt_totalsize(src));
-    printk("bsp_fdt_copy test2\n");
     uint32_t n = (m + sizeof(*d) - 1) / sizeof(*d);
     uint32_t i;
-printk("bsp_fdt_copy test3\n");
+
     for (i = 0; i < n; ++i) {
       d[i] = s[i];
     }

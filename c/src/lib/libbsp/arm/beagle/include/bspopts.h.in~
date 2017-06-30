@@ -8,9 +8,6 @@
    assumes memory starts set to zero. */
 #undef BSP_DIRTY_MEMORY
 
-/* place the FDT blob into the read-only data area */
-#undef BSP_FDT_BLOB_READ_ONLY
-
 /* If defined, print a message and wait until pressed before resetting board
    when application exits. */
 #undef BSP_PRESS_KEY_FOR_RESET
@@ -51,6 +48,3 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* enables U-Boot support using FDT */
-#undef U_BOOT_USE_FDT
