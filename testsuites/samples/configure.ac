@@ -68,6 +68,7 @@ capture/Makefile
 cdtest/Makefile
 fileio/Makefile
 hello/Makefile
+fdt01/Makefile
 iostream/Makefile
 loopback/Makefile
 minimum/Makefile

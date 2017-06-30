@@ -183,6 +183,10 @@ _start:
 	bl bsp_start_init_registers_core
 #endif
 
+#ifdef U_BOOT_USE_FDT
+	bl bsp_fdt_copy
+#endif
+
 #ifdef RTEMS_SMP
 	/* Read MPIDR and get current processor index */
 	mrc	p15, 0, r0, c0, c0, 5
