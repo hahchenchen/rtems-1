@@ -179,8 +179,13 @@ _start:
 #ifndef BSP_START_NEEDS_REGISTER_INITIALIZATION
 	mov	r5, r1		/* machine type number or ~0 for DT boot */
 	mov	r6, r2		/* physical address of ATAGs or DTB */
+	mov	r0, r2
 #else /* BSP_START_NEEDS_REGISTER_INITIALIZATION */
 	bl bsp_start_init_registers_core
+#endif
+
+#ifdef U_BOOT_USE_FDT
+	bl bsp_fdt_copy
 #endif
 
 #ifdef RTEMS_SMP
