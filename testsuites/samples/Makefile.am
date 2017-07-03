@@ -5,7 +5,6 @@ _SUBDIRS += base_sp
 _SUBDIRS += capture
 _SUBDIRS += fileio
 _SUBDIRS += hello
-_SUBDIRS += fdt01
 _SUBDIRS += minimum
 _SUBDIRS += nsecs
 _SUBDIRS += paranoia

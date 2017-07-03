@@ -27,3 +27,8 @@ void bsp_start(void)
   bsp_interrupt_initialize();
   printk("\nRTEMS Beagleboard: %s\n", type);
 }
+
+uint32_t bsp_fdt_map_intr(uint32_t intr)
+{
+  return intr;
+}
