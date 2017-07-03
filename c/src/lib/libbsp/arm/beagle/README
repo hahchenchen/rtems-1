@@ -93,6 +93,17 @@ uboot# bootm 0x80800000
 There is a script here that automatically writes an SD card for any of
 the beagle targets.
 
+Before using the script, you need DTC(device tree compiler) tool to
+compile dts to dtb file. So you need add this tool in RSB bset file.
+
+These dts and dtsi files are licensed under the terms of the GNU
+General Public License * version 2. 
+
+For example, to add dtc tool in rtems-arm.bset, you need include
+dtc.bset in rtems-arm.bset.
+
+%include devel/dtc.bset
+
 Let's write one for the Beaglebone Black. Assuming your source tree is
 at $HOME/development/rtems/rtems-src and your bsp is built and linked
 with examples and installed at $HOME/development/rtems/4.11.
