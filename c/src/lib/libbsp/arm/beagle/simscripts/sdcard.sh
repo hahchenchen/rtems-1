@@ -6,6 +6,7 @@ SIZE=65536
 OFFSET=2048
 FATSIZE=`expr $SIZE - $OFFSET`
 UENV=uEnv.txt
+dtb=am335x-boneblack.dtb
 
 rm -rf $TMPDIR
 mkdir -p $TMPDIR
@@ -50,6 +51,10 @@ set -e
 
 IMG=${imgtype}_`basename $2`-sdcard.img
 
+#Generate dtb file
+$PREFIX/bin/arm-rtems4.12-cpp -P -x assembler-with-cpp -I ./ am335x-boneblack.dts am335x-boneblack-processed.dts
+$PREFIX/bin/dtc -I dts -O dtb -o $dtb am335x-boneblack-processed.dts
+
 # Make an empty image
 dd if=/dev/zero of=$IMG bs=512 seek=`expr $SIZE - 1` count=1
 dd if=/dev/zero of=$FATIMG bs=512 seek=`expr $FATSIZE - 1` count=1
@@ -61,14 +66,15 @@ $PREFIX/bin/newfs_msdos -r 1 -m 0xf8 -c 4 -F16  -h 64 -u 32 -S 512 -s $FATSIZE -
 base=`basename $executable`
 $PREFIX/bin/arm-rtems4.12-objcopy $executable -O binary $TMPDIR/$base.bin
 gzip -9 $TMPDIR/$base.bin
-$PREFIX/bin/mkimage -A arm -O rtems -T kernel -a 0x80000000 -e 0x80000000 -n RTEMS -d $TMPDIR/$base.bin.gz $TMPDIR/$app
+$PREFIX/bin/mkimage -A arm -O linux -T kernel -a 0x80000000 -e 0x80000000 -n RTEMS -d $TMPDIR/$base.bin.gz $TMPDIR/$app
 echo "setenv bootdelay 5
 uenvcmd=run boot
-boot=fatload mmc 0 0x80800000 $app ; bootm 0x80800000" >$TMPDIR/$UENV
+boot=fatload mmc 0 0x80800000 $app ; fatload mmc 0 0x88000000 $dtb ; bootm 0x80800000 - 0x88000000" >$TMPDIR/$UENV
 
 # Copy the uboot and app image onto the FAT image
 $PREFIX/bin/mcopy -bsp -i $FATIMG $PREFIX/uboot/$ubootcfg/MLO ::MLO
 $PREFIX/bin/mcopy -bsp -i $FATIMG $PREFIX/uboot/$ubootcfg/u-boot.img ::u-boot.img
+$PREFIX/bin/mcopy -bsp -i $FATIMG $dtb ::$dtb
 $PREFIX/bin/mcopy -bsp -i $FATIMG $TMPDIR/$app ::$app
 $PREFIX/bin/mcopy -bsp -i $FATIMG $TMPDIR/$UENV ::$UENV
 
